@@ -17,6 +17,18 @@ const COLLEGE_EMAIL_PATTERN = /^\d{13}@silveroakuni\.ac\.in$/;
 
 // UPI transaction ID: 10 to 25 letters/numbers
 const PAYMENT_REF_PATTERN = /^[A-Z0-9]{10,25}$/;
+const VALID_DEPARTMENTS = ['IT', 'Computer Science', 'Electronics', 'Mechanical', 'Civil', 'Other'];
+const VALID_BRANCHES = [
+  'Computer Engineering',
+  'Computer Science & Engineering',
+  'Information Technology',
+  'Electronics & Communication',
+  'Electrical',
+  'Mechanical',
+  'Civil',
+  'Other'
+];
+const VALID_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
 // Turns any value into trimmed text ('' if missing)
 function clean(value) {
@@ -88,6 +100,11 @@ router.post('/register', (req, res) => {
     if (!/^\d{10}$/.test(phone)) {
       return res.status(400).json({ error: 'Phone must be exactly 10 digits' });
     }
+    if (!VALID_DEPARTMENTS.includes(department)
+        || !VALID_BRANCHES.includes(branch)
+        || !VALID_DIVISIONS.includes(division)) {
+      return res.status(400).json({ error: 'Select valid department, branch and division values' });
+    }
     if ([studentName, college, department, branch].some(function (v) { return v.length > 100; }) || division.length > 5) {
       return res.status(400).json({ error: 'One of the fields is too long' });
     }
@@ -145,7 +162,7 @@ router.post('/register', (req, res) => {
 
       const seen = [enrollmentNo];
       for (const m of members) {
-        if (!m.member_name || !ENROLLMENT_PATTERN.test(m.enrollment_no)) {
+        if (!m.member_name || m.member_name.length > 100 || !ENROLLMENT_PATTERN.test(m.enrollment_no)) {
           return res.status(400).json({ error: 'Every team member needs a name and a 13 or 14-digit enrollment number' });
         }
         if (seen.includes(m.enrollment_no)) {

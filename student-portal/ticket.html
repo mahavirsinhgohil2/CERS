@@ -29,7 +29,7 @@
   <main>
     <div class="container">
 
-      <p id="loading-text" class="status-message">Loading ticket...</p>
+      <p id="loading-text" class="status-message" role="status" aria-live="polite">Loading ticket...</p>
 
       <!-- ===== VIEW 1: one ticket (ticket.html?code=...) ===== -->
       <div id="ticket-view" class="hidden">
@@ -75,7 +75,7 @@
         <h1 class="page-heading">Find My Ticket</h1>
 
         <div class="form-card">
-          <div id="lookup-error" class="error-box hidden"></div>
+          <div id="lookup-error" class="error-box hidden" role="status" aria-live="polite"></div>
 
           <form id="lookup-form" novalidate>
             <div class="form-group">

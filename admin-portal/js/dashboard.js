@@ -33,6 +33,9 @@ const attMessage = document.getElementById('att-message');
 const attSummary = document.getElementById('att-summary');
 const attBody = document.getElementById('att-body');
 
+const today = new Date().toISOString().slice(0, 10);
+document.getElementById('event-date').min = today;
+
 // ---------- Data kept in memory after each load ----------
 let allEvents = [];
 let allRegistrations = [];

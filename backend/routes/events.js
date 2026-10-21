@@ -9,6 +9,16 @@ const db = require('../database');
 const { requireAdmin } = require('../middleware/auth');
 
 const VALID_TYPES = ['solo', 'group', 'both'];
+const VALID_COLLEGES = [
+  'All Colleges',
+  'Silver Oak College of Engineering & Technology',
+  'Aditya Silver Oak Institute of Technology',
+  'Silver Oak Institute of Management',
+  'Silver Oak Institute of Design',
+  'Silver Oak Law College',
+  'Silver Oak College of Nursing',
+  'Silver Oak College of Physiotherapy'
+];
 
 // Today as YYYY-MM-DD
 function todayString() {
@@ -55,22 +65,26 @@ router.post('/', requireAdmin, (req, res) => {
       participation_type, min_team_size, max_team_size,
       college, is_recommended, fee
     } = req.body;
+    const eventName = String(name ?? '').trim();
+    const eventDate = String(date ?? '').trim();
+    const eventLocation = String(location ?? '').trim();
+    const eventDescription = String(description ?? '').trim();
 
     // 1. Required fields
-    if (!name || !date || !location) {
+    if (!eventName || !eventDate || !eventLocation) {
       return res.status(400).json({ error: 'Name, date and location are required' });
     }
 
     // 1b. Date must be a real YYYY-MM-DD date, today or later
-    if (!isValidDate(String(date))) {
+    if (!isValidDate(eventDate)) {
       return res.status(400).json({ error: 'Date must be a valid date (YYYY-MM-DD)' });
     }
-    if (String(date) < todayString()) {
+    if (eventDate < todayString()) {
       return res.status(400).json({ error: 'Event date cannot be in the past' });
     }
 
     // 1c. Text length limits
-    if (String(name).length > 100 || String(location).length > 150 || String(description || '').length > 500) {
+    if (eventName.length > 100 || eventLocation.length > 150 || eventDescription.length > 500) {
       return res.status(400).json({ error: 'Name (max 100), location (max 150) or description (max 500) is too long' });
     }
 
@@ -101,14 +115,17 @@ router.post('/', requireAdmin, (req, res) => {
       return res.status(400).json({ error: 'Fee must be a whole number of rupees (0 for free)' });
     }
 
-    const eventCollege = college || 'All Colleges';
+    const eventCollege = String(college || 'All Colleges').trim();
+    if (!VALID_COLLEGES.includes(eventCollege)) {
+      return res.status(400).json({ error: 'Select a valid college restriction' });
+    }
     const recommended = is_recommended ? 1 : 0;
 
     const result = db.prepare(`
       INSERT INTO events
         (name, date, location, description, participation_type, min_team_size, max_team_size, college, is_recommended, fee)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(name, date, location, description || '', type, minSize, maxSize, eventCollege, recommended, entryFee);
+    `).run(eventName, eventDate, eventLocation, eventDescription, type, minSize, maxSize, eventCollege, recommended, entryFee);
 
     res.status(201).json({
       message: 'Event added successfully',
