@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Ticket | Silver Oak University</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= LOGO BAR ================= -->
+  <div class="logo-bar">
+    <img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation">
+  </div>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🎓 Silver Oak University</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="ticket.html" class="active">My Ticket</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <p id="loading-text" class="status-message">Loading ticket...</p>
+
+      <!-- ===== VIEW 1: one ticket (ticket.html?code=...) ===== -->
+      <div id="ticket-view" class="hidden">
+        <h1 class="page-heading no-print">🎟️ Your Event Ticket</h1>
+
+        <div class="ticket-card">
+          <div class="ticket-header">
+            <small>Silver Oak University</small>
+            <h2 id="t-event"></h2>
+            <p id="t-datetime"></p>
+          </div>
+
+          <div class="ticket-body">
+            <div class="ticket-qr">
+              <img id="t-qr" alt="Ticket QR code">
+              <div class="ticket-code" id="t-code"></div>
+            </div>
+
+            <div class="ticket-details">
+              <p><strong>Name:</strong> <span id="t-name"></span></p>
+              <p><strong>Enrollment:</strong> <span id="t-enroll"></span></p>
+              <p><strong>College:</strong> <span id="t-college"></span></p>
+              <p><strong>Branch:</strong> <span id="t-branch"></span></p>
+              <p><strong>Entry:</strong> <span id="t-type"></span></p>
+              <p id="t-members-wrap" class="hidden"><strong>Team members:</strong></p>
+              <ul id="t-members" class="ticket-members"></ul>
+              <p><strong>Venue:</strong> <span id="t-location"></span></p>
+            </div>
+          </div>
+
+          <div id="t-status" class="ticket-status"></div>
+        </div>
+
+        <div class="ticket-actions no-print">
+          <button class="btn-navy" onclick="window.print()">🖨️ Print Ticket</button>
+          <a id="t-download" class="btn-outline" href="#">⬇️ Download QR</a>
+          <a class="btn-outline" href="ticket.html">Find another ticket</a>
+        </div>
+      </div>
+
+      <!-- ===== VIEW 2: find my ticket (ticket.html) ===== -->
+      <div id="lookup-view" class="hidden">
+        <h1 class="page-heading">Find My Ticket</h1>
+
+        <div class="form-card">
+          <div id="lookup-error" class="error-box hidden"></div>
+
+          <form id="lookup-form" novalidate>
+            <div class="form-group">
+              <label for="lookup-enroll">Enrollment No</label>
+              <input type="text" id="lookup-enroll" placeholder="1234567890123" maxlength="14" inputmode="numeric">
+            </div>
+            <div class="form-group">
+              <label for="lookup-email">College Email</label>
+              <input type="email" id="lookup-email" placeholder="1234567890123@silveroakuni.ac.in">
+            </div>
+            <button type="submit" class="btn-navy">Find Tickets</button>
+          </form>
+
+          <ul id="lookup-results" class="lookup-list"></ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Silver Oak University | Diploma IT — 4th Semester
+  </footer>
+
+  <!-- Scripts: api-base.js ALWAYS first, then ticket.js -->
+  <script src="js/api-base.js"></script>
+  <script src="js/ticket.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Basic page settings -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Silver Oak University</title>
+
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Our styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<!-- login-page centers the card on the screen -->
+<body class="login-page" style="min-height: 100vh;">
+
+  <!-- ================= LOGIN CARD (only ONE card) ================= -->
+  <div class="login-card">
+    <!-- Logo appears once, at the top of the card -->
+    <img src="images/logo.png" alt="Silver Oak University" class="login-logo">
+
+    <h1>🔐 Admin Portal</h1>
+    <p class="subtext">Silver Oak University — Event Management</p>
+
+    <!-- Wrong-password message (hidden at first) -->
+    <div id="login-error" class="error-box hidden"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Enter username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter password" required>
+      </div>
+
+      <button type="submit" class="btn-admin btn-full">Login</button>
+    </form>
+  </div>
+
+  <!-- Scripts: api-base.js ALWAYS first, then auth.js -->
+  <script src="js/api-base.js"></script>
+  <script src="js/auth.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Basic page settings -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upcoming Events | Silver Oak University</title>
+
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Our styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🎓 Silver Oak University</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html" class="active">Events</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="ticket.html">My Ticket</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main>
+    <div class="container">
+      <h1 class="page-heading">Upcoming Events</h1>
+
+      <!-- events.js fills this box with cards or a message -->
+      <div id="events-container">
+        <p class="status-message">Loading events...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    © 2025 Silver Oak University | Diploma IT — 4th Semester
+  </footer>
+
+  <!-- Scripts: api-base.js ALWAYS first, then events.js -->
+  <script src="js/api-base.js"></script>
+  <script src="js/events.js"></script>
+
+</body>
+</html>
+
+  <!-- ================= LOGO BAR ================= -->
+  <div class="logo-bar">
+    <img src="images/logo.png" alt="Silver Oak University - Education to Innovation">
+  </div>

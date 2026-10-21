@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Registration | Silver Oak University</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= LOGO BAR ================= -->
+  <div class="logo-bar">
+    <img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation">
+  </div>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🎓 Silver Oak University</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="register.html" class="active">Register</a></li>
+      <li><a href="ticket.html">My Ticket</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main>
+    <div class="container">
+      <h1 class="page-heading">Event Registration Form</h1>
+
+      <div class="form-card">
+
+        <!-- Shown while the event loads -->
+        <p id="loading-text" class="status-message">Loading event...</p>
+
+        <!-- Shown when no event was chosen or it was not found -->
+        <div id="no-event" class="hidden">
+          <p id="no-event-text" class="status-message error"></p>
+          <p style="text-align: center;"><a href="events.html" class="btn-navy">Browse Events</a></p>
+        </div>
+
+        <!-- The real form (shown after the event loads) -->
+        <div id="form-wrapper" class="hidden">
+
+          <h2 id="event-name" class="event-title"></h2>
+          <div id="event-info" class="event-info"></div>
+
+          <div id="success-box" class="success-box hidden"></div>
+          <div id="error-box" class="error-box hidden"></div>
+
+          <form id="register-form" novalidate>
+
+            <div class="form-group">
+              <label for="student_name">Full Name</label>
+              <input type="text" id="student_name" placeholder="Enter your full name">
+              <span class="error-text" id="student_name-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="enrollment_no">Enrollment No</label>
+              <input type="text" id="enrollment_no" placeholder="1234567890123" maxlength="14" inputmode="numeric">
+              <span class="error-text" id="enrollment_no-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="email">College Email</label>
+              <input type="email" id="email" placeholder="1234567890123@silveroakuni.ac.in">
+              <span class="error-text" id="email-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="college">College</label>
+              <select id="college"></select>
+              <span class="error-text" id="college-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select id="department">
+                <option value="">-- Select Department --</option>
+                <option value="IT">IT</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Mechanical">Mechanical</option>
+                <option value="Civil">Civil</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="error-text" id="department-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="branch">Branch</label>
+              <select id="branch"></select>
+              <span class="error-text" id="branch-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="division">Division</label>
+              <select id="division"></select>
+              <span class="error-text" id="division-error"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" placeholder="10-digit number" maxlength="10" inputmode="numeric">
+              <span class="error-text" id="phone-error"></span>
+            </div>
+
+            <!-- Solo / Group choice (only for "Solo or Group" events) -->
+            <div id="mode-group" class="form-group hidden">
+              <label>Participation Type</label>
+              <div class="radio-row">
+                <label><input type="radio" name="participation" value="solo" checked> Solo</label>
+                <label><input type="radio" name="participation" value="group"> Group</label>
+              </div>
+            </div>
+
+            <!-- Team details (group registrations) -->
+            <div id="team-section" class="team-section hidden">
+              <div class="form-group">
+                <label for="team_name">Team Name</label>
+                <input type="text" id="team_name" placeholder="Enter your team name">
+                <span class="error-text" id="team_name-error"></span>
+              </div>
+
+              <p class="team-hint" id="team-hint"></p>
+              <div id="members-container"></div>
+              <span class="error-text" id="members-error"></span>
+
+              <button type="button" id="add-member-btn" class="btn-outline">+ Add Team Member</button>
+            </div>
+
+            <!-- Payment (paid events only) -->
+            <div id="payment-section" class="payment-box hidden">
+              <h3>💳 Payment</h3>
+              <p id="payment-text"></p>
+              <a id="upi-link" class="btn-outline" href="#">Pay with UPI app</a>
+
+              <div class="form-group">
+                <label for="payment_ref">UPI Transaction ID (UTR)</label>
+                <input type="text" id="payment_ref" placeholder="12-digit transaction ID" maxlength="25">
+                <span class="error-text" id="payment_ref-error"></span>
+              </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn-navy">Submit Registration</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Silver Oak University | Diploma IT — 4th Semester
+  </footer>
+
+  <!-- Scripts: api-base.js ALWAYS first, then register.js -->
+  <script src="js/api-base.js"></script>
+  <script src="js/register.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,887 @@
+/* ==========================================================
+   student-portal/css/style.css
+   Student Portal theme: Navy (#002147) + Gold (#C8A951)
+   ========================================================== */
+
+/* ---------- 1. COLOR VARIABLES (Silver Oak University) ---------- */
+:root {
+  --sou-navy: #002147;
+  --sou-deep-blue: #1A3C6E;
+  --sou-gold: #C8A951;
+  --sou-gold-light: #E8C96B;
+  --sou-gray-bg: #F5F7FA;
+  --sou-silver: #E8ECF2;
+  --sou-charcoal: #4A4A4A;
+  --sou-white: #FFFFFF;
+  --sou-green: #28A745;
+  --sou-red: #DC3545;
+}
+
+/* ---------- 2. BASIC RESET ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--sou-gray-bg);
+  color: var(--sou-charcoal);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;   /* keeps the footer at the bottom */
+}
+
+main {
+  flex: 1;                  /* main content fills the empty space */
+}
+
+/* ---------- 3. NAVBAR ---------- */
+.navbar {
+  background-color: var(--sou-navy);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 40px;
+}
+
+.navbar .logo {
+  color: var(--sou-gold);
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--sou-gold);
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--sou-gold-light);
+  border-bottom-color: var(--sou-gold-light);
+}
+
+/* ---------- 4. BUTTONS ---------- */
+/* Gold button (used on the hero section) */
+.btn-gold {
+  display: inline-block;
+  background-color: var(--sou-gold);
+  color: var(--sou-navy);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: var(--sou-gold-light);
+  transform: translateY(-2px);
+}
+
+/* Navy button (used on event cards and the form) */
+.btn-navy {
+  display: inline-block;
+  background-color: var(--sou-navy);
+  color: var(--sou-gold);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-navy:hover {
+  background-color: var(--sou-deep-blue);
+  transform: translateY(-2px);
+}
+
+.btn-navy:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------- 5. HERO SECTION (home page) ---------- */
+.hero {
+  background-color: var(--sou-navy);
+  color: var(--sou-white);
+  text-align: center;
+  padding: 90px 20px;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: var(--sou-gold);
+  margin-bottom: 10px;
+}
+
+.hero h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 1.05rem;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+/* ---------- 6. PAGE LAYOUT (events + register pages) ---------- */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.page-heading {
+  color: var(--sou-navy);
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* ---------- 7. LOADING / ERROR / EMPTY MESSAGES ---------- */
+.status-message {
+  text-align: center;
+  font-size: 1.1rem;
+  padding: 30px 10px;
+  color: var(--sou-charcoal);
+}
+
+.status-message.error {
+  color: var(--sou-red);
+}
+
+/* ---------- 8. EVENT CARDS GRID ---------- */
+/* 3 columns on desktop */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.event-card {
+  background-color: var(--sou-white);
+  border: 1px solid var(--sou-silver);
+  border-top: 4px solid var(--sou-gold);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.event-card h3 {
+  color: var(--sou-navy);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.event-card p {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.event-card .event-description {
+  margin-bottom: 18px;
+  flex: 1;                 /* pushes the button to the bottom of the card */
+}
+
+/* ---------- 9. REGISTRATION FORM ---------- */
+.form-card {
+  background-color: var(--sou-white);
+  border: 1px solid var(--sou-silver);
+  border-top: 4px solid var(--sou-gold);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  color: var(--sou-navy);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  color: var(--sou-charcoal);
+  background-color: var(--sou-white);
+  border: 1px solid var(--sou-silver);
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: all 0.3s ease;
+}
+
+/* Gold border when a field is clicked */
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--sou-gold);
+}
+
+/* Red border when a field has an error (added by JavaScript) */
+.form-group input.invalid,
+.form-group select.invalid {
+  border-color: var(--sou-red);
+}
+
+/* Red error text below each field */
+.error-text {
+  display: block;
+  color: var(--sou-red);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  min-height: 1.2em;
+}
+
+.form-card .btn-navy {
+  width: 100%;
+  margin-top: 6px;
+}
+
+/* ---------- 10. SUCCESS / ERROR BOXES ---------- */
+.success-box {
+  background-color: #E9F7EC;
+  border: 1px solid var(--sou-green);
+  color: var(--sou-green);
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.error-box {
+  background-color: #FDECEE;
+  border: 1px solid var(--sou-red);
+  color: var(--sou-red);
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+/* JavaScript adds/removes this class to show or hide things */
+.hidden {
+  display: none;
+}
+
+/* ---------- 11. FOOTER ---------- */
+footer {
+  background-color: var(--sou-navy);
+  color: var(--sou-gold);
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 18px 10px;
+}
+
+/* ---------- 12. RESPONSIVE (tablet and mobile) ---------- */
+/* Tablet: 2 columns */
+@media (max-width: 900px) {
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile: 1 column, smaller text, stacked navbar */
+@media (max-width: 600px) {
+  .events-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 20px;
+  }
+
+  .hero {
+    padding: 60px 20px;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+  }
+
+  .page-heading {
+    font-size: 1.6rem;
+  }
+
+  .form-card {
+    padding: 20px;
+  }
+}
+
+
+/* ==========================================================
+   HOME PAGE EXTRA SECTIONS
+   ========================================================== */
+
+/* Each section on the home page */
+.section {
+  padding: 30px 0;
+}
+
+/* Light silver background for alternating sections */
+.section-alt {
+  background-color: var(--sou-silver);
+}
+
+.section-title {
+  color: var(--sou-navy);
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.about-text {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+/* ---------- How it works: 3 step cards ---------- */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.step-card {
+  background-color: var(--sou-white);
+  border-top: 4px solid var(--sou-gold);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  padding: 25px 20px;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-4px);
+}
+
+.step-card h3 {
+  color: var(--sou-navy);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Gold circle with the step number */
+.step-number {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+  background-color: var(--sou-navy);
+  color: var(--sou-gold);
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Button centered under the events preview */
+.section-button {
+  text-align: center;
+  margin-top: 28px;
+}
+
+/* ---------- Why use this portal: 4 feature cards ---------- */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.feature-card {
+  background-color: var(--sou-white);
+  border: 1px solid var(--sou-silver);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  padding: 22px 16px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.feature-card h3 {
+  color: var(--sou-navy);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.feature-card p {
+  font-size: 0.92rem;
+}
+
+/* ---------- Call to action banner ---------- */
+.cta {
+  background-color: var(--sou-navy);
+  color: var(--sou-white);
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.cta h2 {
+  color: var(--sou-gold);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.cta p {
+  margin-bottom: 24px;
+  opacity: 0.9;
+}
+
+/* ---------- Responsive for the new sections ---------- */
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .steps-grid,
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+}
+
+
+/* ==========================================================
+   LOGO BAR (navy strip, transparent logo)
+   ========================================================== */
+.logo-bar {
+  background-color: var(--sou-navy);
+  text-align: center;
+  padding: 14px 20px;
+  border-bottom: 2px solid var(--sou-gold);
+}
+
+.logo-bar img {
+  height: 64px;
+  width: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+@media (max-width: 600px) {
+  .logo-bar img {
+    height: 40px;
+  }
+}
+
+/* ==========================================================
+   EVENT TYPES, TEAM FORM AND BADGES
+   ========================================================== */
+
+/* Small label on event cards */
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.badge-recommended {
+  background-color: #FFF4D6;
+  color: #8A6D1D;
+  border: 1px solid var(--sou-gold);
+}
+
+/* Box that explains the chosen event's rules (register page) */
+.event-info {
+  background-color: var(--sou-gray-bg);
+  border: 1px solid var(--sou-silver);
+  border-left: 4px solid var(--sou-gold);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  font-size: 0.92rem;
+  white-space: pre-line;      /* each line on its own row */
+}
+
+/* Solo / Group radio buttons */
+.form-group .radio-row {
+  display: flex;
+  gap: 24px;
+}
+
+.form-group .radio-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.form-group .radio-row input {
+  width: auto;
+}
+
+/* Team section */
+.team-section {
+  border: 1px dashed var(--sou-gold);
+  border-radius: 8px;
+  background-color: #FFFDF6;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.team-hint {
+  font-size: 0.88rem;
+  margin-bottom: 12px;
+}
+
+/* One row per team member: name + enrollment + remove button */
+.member-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.member-row input {
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: var(--sou-charcoal);
+  border: 1px solid var(--sou-silver);
+  border-radius: 6px;
+  padding: 9px 10px;
+  transition: all 0.3s ease;
+}
+
+.member-row input:focus {
+  outline: none;
+  border-color: var(--sou-gold);
+}
+
+.member-row input.invalid {
+  border-color: var(--sou-red);
+}
+
+.btn-remove {
+  background-color: var(--sou-red);
+  color: var(--sou-white);
+  border: none;
+  border-radius: 6px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Outlined navy button ("+ Add Team Member") */
+.btn-outline {
+  background-color: transparent;
+  color: var(--sou-navy);
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border: 2px solid var(--sou-navy);
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background-color: var(--sou-navy);
+  color: var(--sou-gold);
+}
+
+.btn-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .member-row {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-remove {
+    padding: 8px;
+  }
+}
+
+/* ==========================================================
+   EVENT SUMMARY, PAYMENT BOX AND TICKET PAGE
+   ========================================================== */
+
+/* Event name at the top of the register form */
+.event-title {
+  color: var(--sou-navy);
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* Links that look like outlined buttons */
+a.btn-outline {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* Payment box (paid events) */
+.payment-box {
+  border: 1px solid var(--sou-gold);
+  border-left: 4px solid var(--sou-gold);
+  background-color: #FFFDF6;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.payment-box h3 {
+  color: var(--sou-navy);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.payment-box p {
+  font-size: 0.92rem;
+  margin-bottom: 12px;
+}
+
+.payment-box .btn-outline {
+  margin-bottom: 14px;
+}
+
+/* ---------- Ticket card ---------- */
+.ticket-card {
+  max-width: 620px;
+  margin: 0 auto;
+  background-color: var(--sou-white);
+  border-top: 6px solid var(--sou-gold);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.ticket-header {
+  background-color: var(--sou-navy);
+  color: var(--sou-gold);
+  text-align: center;
+  padding: 18px 16px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.ticket-header small {
+  color: var(--sou-white);
+  opacity: 0.85;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.ticket-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.ticket-header p {
+  color: var(--sou-white);
+  font-size: 0.92rem;
+}
+
+/* QR on the left, details on the right, dashed line below */
+.ticket-body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  border-bottom: 2px dashed var(--sou-silver);
+}
+
+.ticket-qr {
+  text-align: center;
+}
+
+.ticket-qr img {
+  width: 170px;
+  height: 170px;
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.ticket-code {
+  font-family: monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--sou-navy);
+}
+
+.ticket-details {
+  flex: 1;
+}
+
+.ticket-details p {
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.ticket-members {
+  margin: 4px 0 0 18px;
+  font-size: 0.88rem;
+}
+
+.ticket-status {
+  text-align: center;
+  font-weight: 600;
+  padding: 14px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.status-free,
+.status-paid {
+  background-color: #E9F7EC;
+  color: #1E7E34;
+}
+
+.status-pending {
+  background-color: #FFF4D6;
+  color: #8A6D1D;
+}
+
+.status-attended {
+  background-color: var(--sou-silver);
+  color: var(--sou-navy);
+}
+
+.ticket-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+/* Find-my-ticket results */
+.lookup-list {
+  list-style: none;
+  margin-top: 16px;
+}
+
+.lookup-list li {
+  border: 1px solid var(--sou-silver);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.lookup-list a {
+  color: var(--sou-navy);
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .ticket-body {
+    flex-direction: column;
+  }
+}
+
+/* Printing: only the ticket is printed */
+@media print {
+  .logo-bar,
+  .navbar,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .ticket-card {
+    box-shadow: none;
+    border: 1px solid #999;
+  }
+}
+
+/* Greyed-out button for past events */
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sou-gold-light);
+  outline-offset: 2px;
+}

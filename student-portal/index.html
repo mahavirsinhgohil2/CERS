@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Basic page settings -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silver Oak University | Event Registration</title>
+
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Our styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ================= LOGO BAR ================= -->
+  <div class="logo-bar">
+    <img src="images/logo.png" alt="Silver Oak University - Education to Innovation">
+  </div>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🎓 Silver Oak University</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="ticket.html">My Ticket</a></li>
+    </ul>
+  </nav>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main>
+
+    <!-- ===== Hero section ===== -->
+    <section class="hero">
+      <h1>Silver Oak University</h1>
+      <h2>College Event Registration Portal</h2>
+      <p>Discover and register for exciting college events</p>
+      <a href="events.html" class="btn-gold">Browse Events</a>
+    </section>
+
+    <!-- ===== About section ===== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">About This Portal</h2>
+        <p class="about-text">
+          The College Event Registration System replaces paper forms with a simple
+          online process. Students can see every upcoming event on campus and
+          register in under a minute. Event organizers can manage events and view
+          all registrations from one secure admin dashboard.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== How it works ===== -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Browse Events</h3>
+            <p>Open the Events page and see all upcoming college events with date and location.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Fill the Form</h3>
+            <p>Click "Register Now" and enter your name, enrollment number, email, department and phone.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Get Confirmed</h3>
+            <p>Submit the form and see an instant confirmation. Your registration is saved for the organizers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Upcoming events preview (filled by js/home.js) ===== -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Upcoming Events</h2>
+        <div id="home-events">
+          <p class="status-message">Loading events...</p>
+        </div>
+        <div class="section-button">
+          <a href="events.html" class="btn-navy">View All Events</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Why use this portal ===== -->
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">Why Use This Portal?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h3>No Paper Forms</h3>
+            <p>Register online from any device.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Quick &amp; Easy</h3>
+            <p>One short form, instant confirmation.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📅</div>
+            <h3>All Events in One Place</h3>
+            <p>Tech, cultural and sports events together.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile Friendly</h3>
+            <p>Works on phones, tablets and computers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Call to action ===== -->
+    <section class="cta">
+      <h2>Ready to join an event?</h2>
+      <p>Pick an event and register today. Need help? Contact your department coordinator.</p>
+      <a href="register.html" class="btn-gold">Register Now</a>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    © 2025 Silver Oak University | Diploma IT — 4th Semester
+  </footer>
+
+  <!-- Scripts: api-base.js ALWAYS first, then home.js -->
+  <script src="js/api-base.js"></script>
+  <script src="js/home.js"></script>
+
+</body>
+</html>
