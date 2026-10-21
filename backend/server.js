@@ -30,8 +30,8 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5500',
   'http://127.0.0.1:5500',
-  'https://student-portal-henna.vercel.app',
-  'https://admin-portal-lyart-one.vercel.app'
+  'https://cers-student-portal.vercel.app',
+  'https://cers-admin-portal.vercel.app'
 ];
 
 app.use(cors({

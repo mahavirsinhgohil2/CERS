@@ -12,4 +12,4 @@ const isLocal = window.location.hostname === 'localhost'
 // Pick the right backend URL automatically
 const API_BASE = isLocal
   ? 'http://localhost:3000'
-  : 'https://cers-4occ.onrender.com';
+  : 'https://cers-oiqy.onrender.com';
