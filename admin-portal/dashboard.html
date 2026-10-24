@@ -4,214 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Silver Oak University</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<!-- data-protected="true" makes auth.js send logged-out visitors to the login page -->
 <body data-protected="true">
-
-  <!-- ================= LOGO BAR ================= -->
-  <div class="logo-bar">
-    <img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation">
-  </div>
-
-  <!-- ================= NAVBAR ================= -->
+  <div class="logo-bar"><img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation"></div>
   <nav class="admin-navbar">
     <span class="brand">🎓 Admin Dashboard — Silver Oak University</span>
-    <button class="btn-logout" onclick="logout()">Logout</button>
+    <div class="nav-links">
+      <a class="active" href="dashboard.html">Dashboard</a>
+      <a href="events.html">Events</a>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
   </nav>
-
-  <div class="dashboard-container">
-
-    <!-- ========== SECTION 1: STATS ROW ========== -->
+  <main class="dashboard-container">
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-number" id="stat-events">0</div>
-        <div class="stat-label">Total Events</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="stat-registrations">0</div>
-        <div class="stat-label">Total Registrations</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="stat-departments">0</div>
-        <div class="stat-label">Departments Covered</div>
-      </div>
+      <div class="stat-card"><div class="stat-number" id="stat-events">0</div><div class="stat-label">Total Events</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-registrations">0</div><div class="stat-label">Total Registrations</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-departments">0</div><div class="stat-label">Departments Covered</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-pending">0</div><div class="stat-label">Pending Payments</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-present">0</div><div class="stat-label">Checked In</div></div>
     </div>
-
-    <!-- ========== SECTION 2: ADD NEW EVENT ========== -->
-    <div class="section-card">
-      <h2>➕ Add New Event</h2>
-
-      <div id="add-success" class="success-box hidden" role="status" aria-live="polite"></div>
-      <div id="add-error" class="error-box hidden" role="status" aria-live="polite"></div>
-
-      <form id="add-event-form">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="event-name">Event Name</label>
-            <input type="text" id="event-name" placeholder="Enter event name" maxlength="100" required>
-          </div>
-          <div class="form-group">
-            <label for="event-date">Date</label>
-            <input type="date" id="event-date" required>
-          </div>
-          <div class="form-group">
-            <label for="event-location">Location</label>
-            <input type="text" id="event-location" placeholder="Enter location" maxlength="150" required>
-          </div>
-          <div class="form-group">
-            <label for="event-description">Description</label>
-            <input type="text" id="event-description" placeholder="Short description (optional)" maxlength="500">
-          </div>
-
-          <div class="form-group">
-            <label for="event-type">Participation Type</label>
-            <select id="event-type">
-              <option value="solo">Solo only</option>
-              <option value="group">Group only</option>
-              <option value="both">Solo or Group (student chooses)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="event-college">Open To</label>
-            <select id="event-college">
-              <option value="All Colleges">All Colleges</option>
-            </select>
-          </div>
-
-          <div class="form-group team-size-field hidden">
-            <label for="event-min-team">Minimum Team Size (including leader)</label>
-            <input type="number" id="event-min-team" min="2" max="20" value="2">
-          </div>
-          <div class="form-group team-size-field hidden">
-            <label for="event-max-team">Maximum Team Size (including leader)</label>
-            <input type="number" id="event-max-team" min="2" max="20" value="4">
-          </div>
-
-          <!-- Entry fee -->
-          <div class="form-group">
-            <label for="event-fee">Entry Fee in ₹ (0 = Free)</label>
-            <input type="number" id="event-fee" min="0" max="100000" value="0">
-          </div>
-
-          <div class="form-group">
-            <label class="checkbox-label">
-              <input type="checkbox" id="event-recommended"> ⭐ Mark as Recommended
-            </label>
-          </div>
-        </div>
-        <button type="submit" id="add-btn" class="btn-admin">Add Event</button>
-      </form>
-    </div>
-
-    <!-- ========== SECTION 3: MANAGE EVENTS ========== -->
-    <div class="section-card">
-      <h2>📋 Manage Events</h2>
+    <section class="section-card">
+      <div class="section-heading"><h1>Events Overview</h1><a class="btn-admin" href="events.html">Manage Events</a></div>
       <div class="table-wrapper">
         <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Event Name</th>
-              <th>Date</th>
-              <th>Location</th>
-              <th>Type</th>
-              <th>Fee</th>
-              <th>Open To</th>
-              <th>Recommended</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="events-body">
-            <tr><td colspan="9" class="status-message">Loading...</td></tr>
-          </tbody>
+          <thead><tr><th>#</th><th>Event</th><th>Date</th><th>Type</th><th>Fee</th><th>Registrations</th><th>Paid / Pending</th><th>Present</th><th>Actions</th></tr></thead>
+          <tbody id="events-body"><tr><td colspan="9" class="status-message">Loading...</td></tr></tbody>
         </table>
       </div>
-    </div>
-
-    <!-- ========== SECTION 4: STUDENT REGISTRATIONS ========== -->
-    <div class="section-card">
-      <h2>👨‍🎓 Student Registrations</h2>
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Student Name</th>
-              <th>Enrollment No</th>
-              <th>Email</th>
-              <th>College</th>
-              <th>Department</th>
-              <th>Branch</th>
-              <th>Div</th>
-              <th>Phone</th>
-              <th>Event</th>
-              <th>Participation</th>
-              <th>Ticket</th>
-              <th>Payment</th>
-            </tr>
-          </thead>
-          <tbody id="registrations-body">
-            <tr><td colspan="13" class="status-message">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ========== SECTION 5: ATTENDANCE ========== -->
-    <div class="section-card">
-      <h2>✅ Attendance</h2>
-
-      <!-- Result of the last check-in (hidden at first) -->
-      <div id="att-message" class="hidden" role="status" aria-live="polite"></div>
-
-      <!-- Pressing Enter submits, so a QR scanner that "types" the code works -->
-      <form id="att-form">
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="att-event">Event</label>
-            <select id="att-event">
-              <option value="">-- Select Event --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="att-code">Scan or Enter Ticket Code</label>
-            <input type="text" id="att-code" placeholder="CERS-XXXXXXXX" autocomplete="off">
-          </div>
-        </div>
-        <button type="submit" class="btn-admin">Check In</button>
-      </form>
-
-      <p id="att-summary" class="att-summary"></p>
-
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Student / Team</th>
-              <th>Enrollment No</th>
-              <th>Ticket</th>
-              <th>Payment</th>
-              <th>Attendance</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="att-body">
-            <tr><td colspan="7" class="status-message">Select an event to see its attendance list.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Scripts: api-base.js FIRST, then auth.js, then dashboard.js -->
+    </section>
+  </main>
   <script src="js/api-base.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/admin-common.js"></script>
   <script src="js/dashboard.js"></script>
-
 </body>
 </html>

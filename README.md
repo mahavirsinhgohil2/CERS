@@ -26,7 +26,9 @@ attendance.
 
 - Server-authenticated admin login
 - Token-protected dashboard API requests
-- Event statistics
+- Overview dashboard with event statistics and per-event actions
+- Separate event management page
+- Separate registrations, payments, and attendance pages for each event
 - Add and delete events
 - Solo, group, or both participation types
 - College restrictions, fees, and recommended-event flag
@@ -40,7 +42,7 @@ attendance.
 |---|---|
 | Frontend | HTML, CSS, vanilla JavaScript |
 | Backend | Node.js and Express |
-| Database | SQLite with better-sqlite3 |
+| Database | SQLite-compatible Turso with `@libsql/client` |
 | QR tickets | qrcode |
 | Deployment | Vercel frontends and Render backend |
 
@@ -60,6 +62,10 @@ college-event-registration-system/
 ├── admin-portal/
 │   ├── index.html
 │   ├── dashboard.html
+│   ├── events.html
+│   ├── registrations.html
+│   ├── payments.html
+│   ├── attendance.html
 │   ├── css/
 │   └── js/
 ├── backend/
@@ -100,7 +106,9 @@ The application uses these optional environment variables:
 | Variable | Purpose | Local default |
 |---|---|---|
 | `PORT` | Backend port | `3000` |
-| `DB_PATH` | SQLite database path | `backend/database.db` |
+| `DB_PATH` | Local SQLite database path when Turso is not configured | `backend/database.db` |
+| `TURSO_DATABASE_URL` | Persistent Turso database URL | unset |
+| `TURSO_AUTH_TOKEN` | Turso authentication token | unset |
 | `ADMIN_USERNAME` | Admin login username | `admin` |
 | `ADMIN_PASSWORD` | Admin login password | `admin123` |
 | `TOKEN_SECRET` | Secret used to sign admin tokens | `dev-secret` |
@@ -135,7 +143,7 @@ Authorization: Bearer <token>
 |---|---|---|
 | POST | `/api/events` | Add an event |
 | DELETE | `/api/events/:id` | Delete an event |
-| GET | `/api/registrations` | List registrations and team members |
+| GET | `/api/registrations` | List registrations and team members; optional `?event_id=X` filter |
 | PUT | `/api/registrations/:id/payment` | Mark payment paid or pending |
 | PUT | `/api/registrations/:id/attendance` | Mark a registration present or absent |
 | POST | `/api/attendance/checkin` | Check in a ticket code |
@@ -173,8 +181,10 @@ The database contains:
 - `team_members`: team members linked to a registration
 
 Foreign keys are enabled. The startup migration keeps older local databases
-usable when the current schema adds columns. `DB_PATH` can point tests or
-another environment to a separate SQLite file.
+usable when the current schema adds columns. When `TURSO_DATABASE_URL` and
+`TURSO_AUTH_TOKEN` are set, the async `@libsql/client` adapter uses Turso for
+persistent deployment storage. Without them, `DB_PATH` points to a local SQLite
+file for development and tests.
 
 ## Verification commands
 
@@ -185,8 +195,9 @@ npm run check
 npm run test:api
 ```
 
-`npm run check` validates JavaScript syntax and verifies that
-`js/api-base.js` is the first script in each HTML page.
+`npm run check` validates JavaScript syntax, verifies admin page script order,
+checks page element IDs used by page scripts, and verifies that admin page
+requests use `adminFetch`.
 
 `npm run test:api` starts an isolated temporary database, checks public
 endpoints, verifies rejected admin access, tests admin login, and checks an
@@ -199,12 +210,11 @@ authenticated admin endpoint.
 - Build command: `npm install`
 - Start command: `npm start`
 - Set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `TOKEN_SECRET`, and `NODE_ENV=production`
-- Set `DB_PATH` only when using a specific persistent database location
+- Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` for permanent database storage
+- Set `DB_PATH` only for local SQLite or an explicitly persistent filesystem
 
-The free Render filesystem is not a reliable permanent store for SQLite.
-Registrations and tickets can be lost after a restart or redeploy. Use
-persistent storage or a production database for real use, and keep backups for
-demonstrations.
+Turso provides the persistent database used by the deployed backend. Keep the
+Turso URL and token in Render environment variables, never in committed source.
 
 ### Vercel frontends
 

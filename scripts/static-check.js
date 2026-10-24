@@ -27,6 +27,28 @@ htmlRoots.forEach(function (directory) {
     if (scripts.length > 0 && scripts[0] !== 'js/api-base.js') {
       throw new Error(file + ': api-base.js must be the first script');
     }
+    if (directory === 'admin-portal' && !file.endsWith(path.join('admin-portal', 'index.html'))) {
+      const protectedPage = /<body[^>]+data-protected="true"/.test(text);
+      if (!protectedPage) throw new Error(file + ': protected admin pages need data-protected="true"');
+      const expected = ['js/api-base.js', 'js/auth.js', 'js/admin-common.js'];
+      expected.forEach(function (script, index) {
+        if (scripts[index] !== script) throw new Error(file + ': scripts must start with api-base.js, auth.js, admin-common.js');
+      });
+    }
+    const pageScript = scripts.find(function (script) {
+      return script.startsWith('js/') && !['js/api-base.js', 'js/auth.js', 'js/admin-common.js'].includes(script);
+    });
+    if (pageScript) {
+      const pageJavaScript = fs.readFileSync(path.join(root, directory, pageScript), 'utf8');
+      [...pageJavaScript.matchAll(/getElementById\(['"]([^'"]+)['"]\)/g)].forEach(function (match) {
+        if (!new RegExp(`id=["']${match[1]}["']`).test(text)) {
+          throw new Error(file + ': missing element id "' + match[1] + '"');
+        }
+      });
+      if (directory === 'admin-portal' && /\bfetch\s*\(/.test(pageJavaScript)) {
+        throw new Error(file + ': page requests must use adminFetch');
+      }
+    }
   });
 });
 

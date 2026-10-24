@@ -252,7 +252,7 @@ router.post('/register', async (req, res) => {
 // ----------------------------------------------------------
 router.get('/registrations', requireAdmin, async (req, res) => {
   try {
-    const registrations = await db.all(`
+    let query = `
       SELECT
         registrations.id,
         registrations.student_name,
@@ -275,8 +275,19 @@ router.get('/registrations', requireAdmin, async (req, res) => {
         events.fee AS event_fee
       FROM registrations
       JOIN events ON registrations.event_id = events.id
-      ORDER BY registrations.id DESC
-    `);
+    `;
+    const args = [];
+    if (req.query.event_id !== undefined) {
+      const eventId = Number(req.query.event_id);
+      if (!Number.isInteger(eventId) || eventId <= 0) {
+        return res.status(400).json({ error: 'event_id must be a positive number' });
+      }
+      query += ' WHERE registrations.event_id = ?';
+      args.push(eventId);
+    }
+    query += ' ORDER BY registrations.id DESC';
+
+    const registrations = await db.all(query, args);
 
     const members = await db.all(
       'SELECT registration_id, member_name, enrollment_no FROM team_members ORDER BY id'

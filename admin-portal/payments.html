@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payments | Silver Oak University</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-protected="true">
+  <div class="logo-bar"><img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation"></div>
+  <nav class="admin-navbar"><span class="brand">🎓 Admin Dashboard — Silver Oak University</span><div class="nav-links"><a class="active" href="dashboard.html">Dashboard</a><a href="events.html">Events</a><button class="btn-logout" onclick="logout()">Logout</button></div></nav>
+  <main class="dashboard-container">
+    <div id="page-message"></div>
+    <section class="section-card">
+      <div class="event-toolbar"><div><div id="event-breadcrumb" class="event-breadcrumb">Loading event...</div><p id="event-info" class="event-info"></p></div><div class="event-toolbar"><label for="event-picker">Event</label><select id="event-picker" class="event-picker"></select><button id="refresh-btn" class="btn-admin" type="button">↻ Refresh</button></div></div>
+      <nav class="tab-bar" aria-label="Event administration"><a id="registrations-tab" href="#">Registrations</a><a class="active" id="payments-tab" href="#">Payments</a><a id="attendance-tab" href="#">Attendance</a></nav>
+      <div id="free-message" class="hidden" role="status" aria-live="polite"></div>
+      <div id="payments-content">
+        <div class="summary-grid">
+          <div class="stat-card"><div class="stat-number" id="summary-fee">₹0</div><div class="stat-label">Fee per registration</div></div>
+          <div class="stat-card"><div class="stat-number" id="summary-registered">0</div><div class="stat-label">Registered</div></div>
+          <div class="stat-card"><div class="stat-number" id="summary-paid">0</div><div class="stat-label">Paid</div></div>
+          <div class="stat-card"><div class="stat-number" id="summary-pending">0</div><div class="stat-label">Pending</div></div>
+          <div class="stat-card"><div class="stat-number" id="summary-collected">₹0</div><div class="stat-label">Collected</div></div>
+          <div class="stat-card"><div class="stat-number" id="summary-expected">₹0</div><div class="stat-label">Expected</div></div>
+        </div>
+        <div class="filter-bar" aria-label="Payment filters"><button class="active" data-filter="all">All</button><button data-filter="pending">Pending</button><button data-filter="paid">Paid</button></div>
+        <div class="table-wrapper"><table><thead><tr><th>#</th><th>Student / Team</th><th>Enrollment</th><th>Phone</th><th>UTR</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="payments-body"><tr><td colspan="8" class="status-message">Loading...</td></tr></tbody></table></div>
+      </div>
+    </section>
+  </main>
+  <script src="js/api-base.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin-common.js"></script>
+  <script src="js/payments.js"></script>
+</body>
+</html>

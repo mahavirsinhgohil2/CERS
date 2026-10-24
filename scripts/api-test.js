@@ -111,6 +111,12 @@ async function run() {
       headers: { Authorization: 'Bearer ' + token }
     });
     assert.strictEqual(registrations.status, 200);
+    const invalidEventFilter = await request('/api/registrations?event_id=not-a-number', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    assert.strictEqual(invalidEventFilter.status, 400);
+    const missingFilterToken = await request('/api/registrations?event_id=1');
+    assert.strictEqual(missingFilterToken.status, 401);
 
     const concurrentBody = {
       student_name: 'Concurrent Student',
@@ -129,6 +135,13 @@ async function run() {
     const concurrentStatuses = concurrentResponses.map(function (response) { return response.status; });
     assert.strictEqual(concurrentStatuses.filter(function (status) { return status === 201; }).length, 1);
     assert.strictEqual(concurrentStatuses.filter(function (status) { return status === 409; }).length, 7);
+    const filteredRegistrations = await request('/api/registrations?event_id=1', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    assert.strictEqual(filteredRegistrations.status, 200);
+    const filteredRows = await filteredRegistrations.json();
+    assert.ok(filteredRows.length > 0);
+    assert.ok(filteredRows.every(function (row) { return row.event_id === 1; }));
 
     const addEvent = await request('/api/events', jsonOptions({
       name: 'Persistence Test Event',

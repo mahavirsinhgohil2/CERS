@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Events | Silver Oak University</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-protected="true">
+  <div class="logo-bar"><img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation"></div>
+  <nav class="admin-navbar"><span class="brand">🎓 Admin Dashboard — Silver Oak University</span><div class="nav-links"><a href="dashboard.html">Dashboard</a><a class="active" href="events.html">Events</a><button class="btn-logout" onclick="logout()">Logout</button></div></nav>
+  <main class="dashboard-container">
+    <section class="section-card">
+      <h1>➕ Add New Event</h1>
+      <div id="add-message" class="hidden" role="status" aria-live="polite"></div>
+      <form id="add-event-form">
+        <div class="form-grid">
+          <div class="form-group"><label for="event-name">Event Name</label><input id="event-name" maxlength="100" required></div>
+          <div class="form-group"><label for="event-date">Date</label><input type="date" id="event-date" required></div>
+          <div class="form-group"><label for="event-location">Location</label><input id="event-location" maxlength="150" required></div>
+          <div class="form-group"><label for="event-description">Description</label><textarea id="event-description" maxlength="500"></textarea></div>
+          <div class="form-group"><label for="event-type">Participation Type</label><select id="event-type"><option value="solo">Solo only</option><option value="group">Group only</option><option value="both">Solo or Group</option></select></div>
+          <div class="form-group"><label for="event-college">Open To</label><select id="event-college"><option value="All Colleges">All Colleges</option></select></div>
+          <div class="form-group team-size-field hidden"><label for="event-min-team">Minimum Team Size</label><input type="number" id="event-min-team" min="2" max="20" value="2"></div>
+          <div class="form-group team-size-field hidden"><label for="event-max-team">Maximum Team Size</label><input type="number" id="event-max-team" min="2" max="20" value="4"></div>
+          <div class="form-group"><label for="event-fee">Entry Fee in ₹</label><input type="number" id="event-fee" min="0" max="100000" value="0"></div>
+          <div class="form-group"><label class="checkbox-label"><input type="checkbox" id="event-recommended"> ⭐ Mark as Recommended</label></div>
+        </div>
+        <button type="submit" class="btn-admin">Add Event</button>
+      </form>
+    </section>
+    <section class="section-card">
+      <h1>📋 Manage Events</h1>
+      <div class="table-wrapper"><table><thead><tr><th>#</th><th>Event</th><th>Date</th><th>Location</th><th>Type</th><th>Fee</th><th>Open To</th><th>Recommended</th><th>Action</th></tr></thead><tbody id="events-body"><tr><td colspan="9" class="status-message">Loading...</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <script src="js/api-base.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin-common.js"></script>
+  <script src="js/events.js"></script>
+</body>
+</html>

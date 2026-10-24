@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance | Silver Oak University</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-protected="true">
+  <div class="logo-bar"><img src="images/logo-light.png" alt="Silver Oak University - Education to Innovation"></div>
+  <nav class="admin-navbar"><span class="brand">🎓 Admin Dashboard — Silver Oak University</span><div class="nav-links"><a class="active" href="dashboard.html">Dashboard</a><a href="events.html">Events</a><button class="btn-logout" onclick="logout()">Logout</button></div></nav>
+  <main class="dashboard-container">
+    <div id="page-message"></div>
+    <section class="section-card">
+      <div class="event-toolbar"><div><div id="event-breadcrumb" class="event-breadcrumb">Loading event...</div><p id="event-info" class="event-info"></p></div><div class="event-toolbar"><label for="event-picker">Event</label><select id="event-picker" class="event-picker"></select><button id="refresh-btn" class="btn-admin" type="button">↻ Refresh</button></div></div>
+      <nav class="tab-bar" aria-label="Event administration"><a id="registrations-tab" href="#">Registrations</a><a id="payments-tab" href="#">Payments</a><a class="active" id="attendance-tab" href="#">Attendance</a></nav>
+      <div id="attendance-message" class="hidden" role="status" aria-live="polite"></div>
+      <form id="checkin-form" class="event-toolbar"><div class="form-group"><label for="ticket-code">Scan or enter ticket code</label><input id="ticket-code" placeholder="CERS-XXXXXXXXXXXX" autocomplete="off"></div><button class="btn-admin" type="submit">Check In</button></form>
+      <div class="summary-grid">
+        <div class="stat-card"><div class="stat-number" id="summary-registered">0</div><div class="stat-label">Registered</div></div>
+        <div class="stat-card"><div class="stat-number" id="summary-present">0</div><div class="stat-label">Present</div></div>
+        <div class="stat-card"><div class="stat-number" id="summary-absent">0</div><div class="stat-label">Absent</div></div>
+        <div class="stat-card"><div class="stat-number" id="summary-pending">0</div><div class="stat-label">Payment pending</div></div>
+      </div>
+      <div class="table-wrapper"><table><thead><tr><th>#</th><th>Student / Team</th><th>Enrollment</th><th>Ticket</th><th>Payment</th><th>Attendance (time)</th><th>Action</th></tr></thead><tbody id="attendance-body"><tr><td colspan="7" class="status-message">Loading...</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <script src="js/api-base.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin-common.js"></script>
+  <script src="js/attendance.js"></script>
+</body>
+</html>
