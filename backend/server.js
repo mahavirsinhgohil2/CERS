@@ -11,8 +11,7 @@ const ticketRoutes = require('./routes/tickets');
 const { createToken, hash } = require('./middleware/auth');
 const rateLimit = require('./middleware/rateLimit');
 
-// Loading database.js creates the tables and seed data
-require('./database');
+const db = require('./database');
 
 const eventRoutes = require('./routes/events');
 const registrationRoutes = require('./routes/registrations');
@@ -116,6 +115,11 @@ app.use((err, req, res, next) => {
 // ----------------------------------------------------------
 // START THE SERVER
 // ----------------------------------------------------------
-app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+db.init().then(() => {
+  app.listen(PORT, () => {
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+  });
+}).catch((error) => {
+  console.error('Database setup failed:', error.message);
+  process.exit(1);
 });

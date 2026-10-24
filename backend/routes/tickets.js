@@ -15,7 +15,7 @@ const rateLimit = require('../middleware/rateLimit');
 // Find all tickets of one student (enrollment number + email)
 // This must come BEFORE the /:code route
 // ----------------------------------------------------------
-router.get('/lookup', rateLimit(30, 15 * 60 * 1000), (req, res) => {
+router.get('/lookup', rateLimit(30, 15 * 60 * 1000), async (req, res) => {
   try {
     const enrollmentNo = String(req.query.enrollment_no || '').trim();
     const email = String(req.query.email || '').trim().toLowerCase();
@@ -24,14 +24,14 @@ router.get('/lookup', rateLimit(30, 15 * 60 * 1000), (req, res) => {
       return res.status(400).json({ error: 'Enrollment number and email are required' });
     }
 
-    const tickets = db.prepare(`
+    const tickets = await db.all(`
       SELECT registrations.ticket_code, registrations.payment_status, registrations.attended,
              events.name AS event_name, events.date AS event_date
       FROM registrations
       JOIN events ON registrations.event_id = events.id
       WHERE registrations.enrollment_no = ? AND registrations.email = ?
       ORDER BY registrations.id DESC
-    `).all(enrollmentNo, email);
+    `, [enrollmentNo, email]);
 
     res.json(tickets);
   } catch (error) {
@@ -47,22 +47,23 @@ router.get('/:code', async (req, res) => {
   try {
     const code = String(req.params.code || '').trim().toUpperCase();
 
-    const ticket = db.prepare(`
+    const ticket = await db.get(`
       SELECT registrations.*,
              events.name AS event_name, events.date AS event_date,
              events.location AS event_location, events.fee AS event_fee
       FROM registrations
       JOIN events ON registrations.event_id = events.id
       WHERE registrations.ticket_code = ?
-    `).get(code);
+    `, [code]);
 
     if (!ticket) {
       return res.status(404).json({ error: 'Ticket not found' });
     }
 
-    const members = db
-      .prepare('SELECT member_name, enrollment_no FROM team_members WHERE registration_id = ? ORDER BY id')
-      .all(ticket.id);
+    const members = await db.all(
+      'SELECT member_name, enrollment_no FROM team_members WHERE registration_id = ? ORDER BY id',
+      [ticket.id]
+    );
 
     // The QR code contains only the ticket code
     const qr = await QRCode.toDataURL(ticket.ticket_code, { width: 300, margin: 2 });

@@ -33,9 +33,9 @@ function isValidDate(text) {
 }
 
 // GET /api/events : all events, earliest date first
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const events = db.prepare('SELECT * FROM events ORDER BY date ASC').all();
+    const events = await db.all('SELECT * FROM events ORDER BY date ASC');
     res.json(events);
   } catch (error) {
     console.error('Error fetching events:', error.message);
@@ -44,9 +44,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/events/:id : one event (used by the register page)
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const event = db.prepare('SELECT * FROM events WHERE id = ?').get(req.params.id);
+    const event = await db.get('SELECT * FROM events WHERE id = ?', [req.params.id]);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -58,7 +58,7 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/events : add a new event
-router.post('/', requireAdmin, (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
   try {
     const {
       name, date, location, description,
@@ -121,11 +121,11 @@ router.post('/', requireAdmin, (req, res) => {
     }
     const recommended = is_recommended ? 1 : 0;
 
-    const result = db.prepare(`
+    const result = await db.run(`
       INSERT INTO events
         (name, date, location, description, participation_type, min_team_size, max_team_size, college, is_recommended, fee)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(eventName, eventDate, eventLocation, eventDescription, type, minSize, maxSize, eventCollege, recommended, entryFee);
+    `, [eventName, eventDate, eventLocation, eventDescription, type, minSize, maxSize, eventCollege, recommended, entryFee]);
 
     res.status(201).json({
       message: 'Event added successfully',
@@ -139,11 +139,15 @@ router.post('/', requireAdmin, (req, res) => {
 
 // DELETE /api/events/:id : delete an event
 // (its registrations and team members are removed automatically)
-router.delete('/:id', requireAdmin, (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
   try {
-    const result = db.prepare('DELETE FROM events WHERE id = ?').run(req.params.id);
+    const results = await db.batch([
+      ['DELETE FROM team_members WHERE registration_id IN (SELECT id FROM registrations WHERE event_id = ?)', [req.params.id]],
+      ['DELETE FROM registrations WHERE event_id = ?', [req.params.id]],
+      ['DELETE FROM events WHERE id = ?', [req.params.id]]
+    ]);
 
-    if (result.changes === 0) {
+    if (results[2].rowsAffected === 0) {
       return res.status(404).json({ error: 'Event not found' });
     }
 

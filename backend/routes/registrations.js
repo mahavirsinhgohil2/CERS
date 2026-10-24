@@ -30,6 +30,13 @@ const VALID_BRANCHES = [
 ];
 const VALID_DIVISIONS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
+class HttpError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
 // Turns any value into trimmed text ('' if missing)
 function clean(value) {
   return String(value ?? '').trim();
@@ -41,11 +48,11 @@ function todayString() {
 // ----------------------------------------------------------
 // Makes a unique ticket code like CERS-7F3A9C2B
 // ----------------------------------------------------------
-function makeTicketCode() {
+async function makeTicketCode(tx) {
   let code;
   do {
     code = 'CERS-' + crypto.randomBytes(6).toString('hex').toUpperCase();
-  } while (db.prepare('SELECT id FROM registrations WHERE ticket_code = ?').get(code));
+  } while (await tx.get('SELECT id FROM registrations WHERE ticket_code = ?', [code]));
   return code;
 }
 
@@ -53,18 +60,19 @@ function makeTicketCode() {
 // Is this enrollment number already in this event?
 // (as a team leader or as a team member)
 // ----------------------------------------------------------
-function isAlreadyInEvent(enrollmentNo, eventId) {
-  const asLeader = db
-    .prepare('SELECT id FROM registrations WHERE enrollment_no = ? AND event_id = ?')
-    .get(enrollmentNo, eventId);
+async function isAlreadyInEvent(tx, enrollmentNo, eventId) {
+  const asLeader = await tx.get(
+    'SELECT id FROM registrations WHERE enrollment_no = ? AND event_id = ?',
+    [enrollmentNo, eventId]
+  );
   if (asLeader) return true;
 
-  const asMember = db.prepare(`
+  const asMember = await tx.get(`
     SELECT team_members.id
     FROM team_members
     JOIN registrations ON team_members.registration_id = registrations.id
     WHERE team_members.enrollment_no = ? AND registrations.event_id = ?
-  `).get(enrollmentNo, eventId);
+  `, [enrollmentNo, eventId]);
 
   return Boolean(asMember);
 }
@@ -72,7 +80,7 @@ function isAlreadyInEvent(enrollmentNo, eventId) {
 // ----------------------------------------------------------
 // POST /api/register
 // ----------------------------------------------------------
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const studentName  = clean(req.body.student_name);
     const enrollmentNo = clean(req.body.enrollment_no);
@@ -110,7 +118,7 @@ router.post('/register', (req, res) => {
     }
 
     // 3. The event must exist
-    const event = db.prepare('SELECT * FROM events WHERE id = ?').get(eventId);
+    const event = await db.get('SELECT * FROM events WHERE id = ?', [eventId]);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
@@ -181,52 +189,57 @@ router.post('/register', (req, res) => {
       if (!PAYMENT_REF_PATTERN.test(paymentRef)) {
         return res.status(400).json({ error: 'Enter the UPI transaction ID (10 to 25 letters or numbers)' });
       }
-      const refUsed = db.prepare('SELECT id FROM registrations WHERE payment_ref = ?').get(paymentRef);
-      if (refUsed) {
-        return res.status(409).json({ error: 'This transaction ID was already used for another registration' });
-      }
       paymentStatus = 'pending';   // the admin verifies it later
     }
 
     // 8. Nobody (leader or member) may already be in this event
     const everyone = [enrollmentNo].concat(members.map(function (m) { return m.enrollment_no; }));
-    for (const en of everyone) {
-      if (isAlreadyInEvent(en, eventId)) {
-        return res.status(409).json({ error: `Enrollment number ${en} is already registered for this event` });
+    const result = await db.transaction(async function (tx) {
+      if (paymentRef) {
+        const refUsed = await tx.get('SELECT id FROM registrations WHERE payment_ref = ?', [paymentRef]);
+        if (refUsed) {
+          throw new HttpError(409, 'This transaction ID was already used for another registration');
+        }
       }
-    }
 
-    // 9. Save everything together (all or nothing)
-    const ticketCode = makeTicketCode();
+      for (const en of everyone) {
+        if (await isAlreadyInEvent(tx, en, eventId)) {
+          throw new HttpError(409, `Enrollment number ${en} is already registered for this event`);
+        }
+      }
 
-    const saveRegistration = db.transaction(function () {
-      const result = db.prepare(`
+      const ticketCode = await makeTicketCode(tx);
+      const registration = await tx.run(`
         INSERT INTO registrations
           (student_name, enrollment_no, email, college, department, branch, division, phone,
            event_id, participation, team_name, ticket_code, payment_status, payment_ref)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(studentName, enrollmentNo, email, college, department, branch, division, phone,
-             eventId, mode, teamName, ticketCode, paymentStatus, paymentRef);
+      `, [studentName, enrollmentNo, email, college, department, branch, division, phone,
+        eventId, mode, teamName, ticketCode, paymentStatus, paymentRef]);
 
-      const insertMember = db.prepare(
-        'INSERT INTO team_members (registration_id, member_name, enrollment_no) VALUES (?, ?, ?)'
-      );
-      members.forEach(function (m) {
-        insertMember.run(result.lastInsertRowid, m.member_name, m.enrollment_no);
-      });
+      for (const m of members) {
+        await tx.run(
+          'INSERT INTO team_members (registration_id, member_name, enrollment_no) VALUES (?, ?, ?)',
+          [registration.lastInsertRowid, m.member_name, m.enrollment_no]
+        );
+      }
+
+      return { ticketCode };
     });
-    saveRegistration();
 
     res.status(201).json({
       message: 'Registration successful',
       event_name: event.name,
       participation: mode,
       team_name: teamName,
-      ticket_code: ticketCode,
+      ticket_code: result.ticketCode,
       payment_status: paymentStatus
     });
   } catch (error) {
-    if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+    if (error instanceof HttpError) {
+      return res.status(error.status).json({ error: error.message });
+    }
+    if (error.code === 'SQLITE_CONSTRAINT' || String(error.message).includes('UNIQUE constraint failed')) {
       return res.status(409).json({ error: 'Already registered, or this transaction ID was already used' });
     }
     console.error('Error saving registration:', error.message);
@@ -237,9 +250,9 @@ router.post('/register', (req, res) => {
 // ----------------------------------------------------------
 // GET /api/registrations (admin)
 // ----------------------------------------------------------
-router.get('/registrations', requireAdmin, (req, res) => {
+router.get('/registrations', requireAdmin, async (req, res) => {
   try {
-    const registrations = db.prepare(`
+    const registrations = await db.all(`
       SELECT
         registrations.id,
         registrations.student_name,
@@ -263,11 +276,11 @@ router.get('/registrations', requireAdmin, (req, res) => {
       FROM registrations
       JOIN events ON registrations.event_id = events.id
       ORDER BY registrations.id DESC
-    `).all();
+    `);
 
-    const members = db
-      .prepare('SELECT registration_id, member_name, enrollment_no FROM team_members ORDER BY id')
-      .all();
+    const members = await db.all(
+      'SELECT registration_id, member_name, enrollment_no FROM team_members ORDER BY id'
+    );
 
     registrations.forEach(function (r) {
       r.team_members = members.filter(function (m) {
@@ -286,14 +299,14 @@ router.get('/registrations', requireAdmin, (req, res) => {
 // PUT /api/registrations/:id/payment (admin)
 // Body: { status: 'paid' } or { status: 'pending' }
 // ----------------------------------------------------------
-router.put('/registrations/:id/payment', requireAdmin, (req, res) => {
+router.put('/registrations/:id/payment', requireAdmin, async (req, res) => {
   try {
     const status = clean(req.body.status);
     if (status !== 'paid' && status !== 'pending') {
       return res.status(400).json({ error: 'Status must be paid or pending' });
     }
 
-    const reg = db.prepare('SELECT * FROM registrations WHERE id = ?').get(req.params.id);
+    const reg = await db.get('SELECT * FROM registrations WHERE id = ?', [req.params.id]);
     if (!reg) {
       return res.status(404).json({ error: 'Registration not found' });
     }
@@ -301,11 +314,11 @@ router.put('/registrations/:id/payment', requireAdmin, (req, res) => {
       return res.status(400).json({ error: 'This is a free registration' });
     }
 
-    db.prepare('UPDATE registrations SET payment_status = ? WHERE id = ?').run(status, reg.id);
+    await db.run('UPDATE registrations SET payment_status = ? WHERE id = ?', [status, reg.id]);
 
     // If payment is undone, attendance is cleared too
     if (status === 'pending') {
-      db.prepare('UPDATE registrations SET attended = 0, attended_at = NULL WHERE id = ?').run(reg.id);
+      await db.run('UPDATE registrations SET attended = 0, attended_at = NULL WHERE id = ?', [reg.id]);
     }
 
     res.json({ message: 'Payment updated' });
@@ -319,11 +332,11 @@ router.put('/registrations/:id/payment', requireAdmin, (req, res) => {
 // PUT /api/registrations/:id/attendance (admin)
 // Body: { attended: true } or { attended: false }
 // ----------------------------------------------------------
-router.put('/registrations/:id/attendance', requireAdmin, (req, res) => {
+router.put('/registrations/:id/attendance', requireAdmin, async (req, res) => {
   try {
     const attended = req.body.attended === true;
 
-    const reg = db.prepare('SELECT * FROM registrations WHERE id = ?').get(req.params.id);
+    const reg = await db.get('SELECT * FROM registrations WHERE id = ?', [req.params.id]);
     if (!reg) {
       return res.status(404).json({ error: 'Registration not found' });
     }
@@ -331,8 +344,10 @@ router.put('/registrations/:id/attendance', requireAdmin, (req, res) => {
       return res.status(403).json({ error: 'Payment is not verified yet' });
     }
 
-    db.prepare('UPDATE registrations SET attended = ?, attended_at = ? WHERE id = ?')
-      .run(attended ? 1 : 0, attended ? new Date().toISOString() : null, reg.id);
+    await db.run(
+      'UPDATE registrations SET attended = ?, attended_at = ? WHERE id = ?',
+      [attended ? 1 : 0, attended ? new Date().toISOString() : null, reg.id]
+    );
 
     res.json({ message: 'Attendance updated' });
   } catch (error) {
@@ -346,19 +361,19 @@ router.put('/registrations/:id/attendance', requireAdmin, (req, res) => {
 // Body: { ticket_code: 'CERS-XXXXXXXX', event_id: 1 (optional) }
 // Marks the ticket's registration as present
 // ----------------------------------------------------------
-router.post('/attendance/checkin', requireAdmin, (req, res) => {
+router.post('/attendance/checkin', requireAdmin, async (req, res) => {
   try {
     const code = clean(req.body.ticket_code).toUpperCase();
     if (!code) {
       return res.status(400).json({ error: 'Ticket code is required' });
     }
 
-    const reg = db.prepare(`
+    const reg = await db.get(`
       SELECT registrations.*, events.name AS event_name
       FROM registrations
       JOIN events ON registrations.event_id = events.id
       WHERE registrations.ticket_code = ?
-    `).get(code);
+    `, [code]);
 
     if (!reg) {
       return res.status(404).json({ error: 'Ticket not found' });
@@ -378,8 +393,10 @@ router.post('/attendance/checkin', requireAdmin, (req, res) => {
       return res.status(409).json({ error: 'Already checked in', student_name: reg.student_name });
     }
 
-    db.prepare('UPDATE registrations SET attended = 1, attended_at = ? WHERE id = ?')
-      .run(new Date().toISOString(), reg.id);
+    await db.run(
+      'UPDATE registrations SET attended = 1, attended_at = ? WHERE id = ?',
+      [new Date().toISOString(), reg.id]
+    );
 
     res.json({
       message: 'Checked in',
